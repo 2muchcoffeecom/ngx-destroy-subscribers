@@ -6,7 +6,7 @@ factories
 .DS_Store
 *.log
 .history
-.idea
+.idea/
 *.d.ts
 *.js
 *.metadata.json

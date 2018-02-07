@@ -1,9 +1,5 @@
 
-[![Build Status](https://travis-ci.org/xmaestro/ng2-tagsinput.svg?branch=master)](https://travis-ci.org/xmaestro/ng2-tagsinput)
-
-# Angular 2 : Typescript component for Destroy Subscribers
-
-An improved version of [angular2-tag-input](https://github.com/rosslavery/angular2-tag-input)
+# Angular 2+ : Typescript component for Destroy Subscribers
 
 Installation
 --------------------------------------
@@ -11,19 +7,19 @@ Installation
 Install it from npm:
 
 ```bash
-npm install ng2-destroy-subscribers
+npm install ngx-destroy-subscribers
 ```
 
 Usage
 --------------------------------------
 
 
-### Подключение
+### Integration
 
-Подключение декоратора
+Decorator integration
 
 ```html
-import {DestroySubscribers} from "ng2-destroy-subscribers";
+import {DestroySubscribers} from "ngx-destroy-subscribers";
 
 @Component({
   ...
@@ -46,9 +42,9 @@ export class TestComponent {
 }
 ```
 
-- `subscribers` - Обьект в котором хранятся все подписчики
-- `addSubscribersFunc` - Функция в которой мы подписываемся на стримы (по умолчанию - addSubscribers)
-- `removeSubscribersFunc` - Функция в которой автоматически удаляются подписчики (по умолчанию - removeSubscribers)
-- `initFunc` - Функция которая вызывается при срабатывании конструктора (по умолчанию - ngOnInit)
-- `destroyFunc` - Функция которая вызывается при срабатывании деструктора (по умолчанию - ngOnDestroy)
+- `subscribers` - The object which stores all subscribers
+- `addSubscribersFunc` - The function where subscriptions on streams happen (by default - addSubscribers)
+- `removeSubscribersFunc` - The function where subscribers are removed automatically (by default - removeSubscribers)
+- `initFunc` - The function that is called when constructor is applied (by default - ngOnInit)
+- `destroyFunc` - The function that is called when destructor is applied (by default - ngOnDestroy)
 

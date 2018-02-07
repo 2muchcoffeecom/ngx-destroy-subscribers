@@ -1,8 +1,8 @@
 {
-  "name": "ng2-destroy-subscribers",
-  "version": "0.0.26",
+  "name": "ngx-destroy-subscribers",
+  "version": "1.0.1",
   "description": "Typescript component aut destroy subscribers",
-  "main": "ng2-destroy-subscribers.js",
+  "main": "ngx-destroy-subscribers.js",
   "scripts": {
     "dev": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,22 +10,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/logvinoleg89/ng2-destroy-subscribers.git"
+    "url": "git+https://github.com/logvinoleg89/ngx-destroy-subscribers.git"
   },
   "keywords": [
-    "ng2-destroy-subscribers"
+    "ng2-destroy-subscribers",
+    "ngx-destroy-subscribers"
   ],
   "author": "logvinoleg89",
   "bugs": {
-    "url": "https://github.com/logvinoleg89/ng2-destroy-subscribers/issues"
+    "url": "https://github.com/logvinoleg89/ngx-destroy-subscribers/issues"
   },
-  "homepage": "https://github.com/logvinoleg89/ng2-destroy-subscribers#readme",
+  "homepage": "https://github.com/logvinoleg89/ngx-destroy-subscribers#readme",
   "dependencies": {
   },
   "devDependencies": {
-    "rxjs": "^5.0.0-beta.12",
-    "typescript": "^2.0.2",
+    "rxjs": "^5.5.0",
+    "typescript": "~2.4.2",
     "typings": "^1.3.3",
-    "zone.js": "^0.6.23"
+    "zone.js": "^0.8.14"
   }
 }

@@ -1,4 +1,4 @@
-import {Subscriber} from "rxjs";
+import { Subscriber } from 'rxjs/Subscriber';
 
 export function DestroySubscribers(
   params?
@@ -16,26 +16,26 @@ export function DestroySubscribers(
     
     function ngOnDestroyDecorator(f) {
       return function () {
-        let superData = f ? f.apply(this, arguments) : null;
+        const superData = f ? f.apply(this, arguments) : null;
         
         if (typeof this[params.removeSubscribersFunc] === 'function') {
           this[params.removeSubscribersFunc]();
         }
         
-        for (let subscriberKey in this.subscribers) {
-          let subscriber = this.subscribers[subscriberKey];
+        for (const subscriberKey of Object.keys(this.subscribers)) {
+          const subscriber = this.subscribers[subscriberKey];
           if (subscriber instanceof Subscriber) {
             subscriber.unsubscribe();
           }
         }
         
         return superData;
-      }
+      };
     }
     
     function ngOnInitDecorator(f) {
       return function () {
-        let superData = f ? f.apply(this, arguments) : null;
+        const superData = f ? f.apply(this, arguments) : null;
         
         
         if (typeof this[params.addSubscribersFunc] === 'function') {
@@ -44,9 +44,9 @@ export function DestroySubscribers(
         
         
         return superData;
-      }
+      };
     }
     
     return target;
-  }
+  };
 }
