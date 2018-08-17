@@ -1,17 +1,28 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "experimentalDecorators": true,
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
-    "declaration": true,
-    "lib": ["es6", "dom"]
-  },
-  "files": [
-    "index.ts"
-  ],
-  "angularCompilerOptions": {
-    "genDir": "factories"
+    "experimentalDecorators": true,
+    "target": "es5",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "paths": {
+      "ngx-destroy-subscribers": [
+        "dist/ngx-destroy-subscribers"
+      ],
+      "ngx-destroy-subscribers/*": [
+        "dist/ngx-destroy-subscribers/*"
+      ]
+    }
   }
 }

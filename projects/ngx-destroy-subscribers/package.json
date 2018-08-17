@@ -1,0 +1,21 @@
+{
+  "name": "ngx-destroy-subscribers",
+  "version": "6.0.0-beta-1",
+  "description": "Typescript component aut destroy subscribers",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/logvinoleg89/ngx-destroy-subscribers.git"
+  },
+  "keywords": [
+    "ng2-destroy-subscribers",
+    "ngx-destroy-subscribers"
+  ],
+  "author": "logvinoleg89",
+  "bugs": {
+    "url": "https://github.com/logvinoleg89/ngx-destroy-subscribers/issues"
+  },
+  "homepage": "https://github.com/logvinoleg89/ngx-destroy-subscribers#readme",
+  "peerDependencies": {
+    "rxjs": "^6.0.0"
+  }
+}
