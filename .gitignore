@@ -10,3 +10,4 @@ factories
 *.d.ts
 *.js
 *.metadata.json
+dist
