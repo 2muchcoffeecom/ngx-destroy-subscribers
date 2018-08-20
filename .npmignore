@@ -1,7 +1,0 @@
-tsconfig.json
-.npmignore
-.idea
-.history
-*.ts
-!*.d.ts
-factories
