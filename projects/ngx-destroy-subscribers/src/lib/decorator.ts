@@ -1,4 +1,4 @@
-import { Subscriber } from 'rxjs/index';
+import { Unsubscribable } from 'rxjs/index';
 
 export function DestroySubscribers(
   params?: {
@@ -29,8 +29,8 @@ export function DestroySubscribers(
         }
 
         for (const subscriberKey of Object.keys(this.subscribers)) {
-          const subscriber = this.subscribers[subscriberKey];
-          if (subscriber instanceof Subscriber) {
+          const subscriber: Unsubscribable = this.subscribers[subscriberKey];
+          if (subscriber && typeof subscriber.unsubscribe === 'function') {
             subscriber.unsubscribe();
           }
         }
