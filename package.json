@@ -31,6 +31,7 @@
     "karma-jasmine": "~1.1.1",
     "karma-jasmine-html-reporter": "^0.2.2",
     "ng-packagr": "^3.0.0-rc.2",
+    "reflect-metadata": "^0.1.12",
     "protractor": "^5.4.0",
     "ts-node": "~5.0.1",
     "tsickle": ">=0.25.5",
