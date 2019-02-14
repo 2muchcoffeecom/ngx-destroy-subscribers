@@ -1,58 +1,35 @@
-import { Unsubscribable } from 'rxjs/index';
+import { Unsubscribable } from 'rxjs';
+import 'reflect-metadata';
 
-export function DestroySubscribers(
-  params?: {
-    addSubscribersFunc: string,
-    removeSubscribersFunc: string,
-    initFunc: string,
-    destroyFunc: string,
+export function DestroySubscribers<TFunction extends Function>(target: TFunction) {
+  
+  const subscriptions: Array<Unsubscribable> = [];
+  const subscriber: string = Reflect.getMetadata('subscription:name', target.prototype, 'subscriber');
+  
+  Object.defineProperty(target.prototype, subscriber ? subscriber : 'subscriber', {
+    get: () => subscriptions,
+    set: subscription => subscriptions.push(subscription),
+  });
+  
+  if (typeof target.prototype.ngOnDestroy !== 'function') {
+    throw new Error(`${target.prototype.constructor.name} must implement ngOnDestroy() lifecycle hook`);
   }
-) {
-  return function (target: any) {
-    params = {
-      addSubscribersFunc: 'addSubscribers',
-      removeSubscribersFunc: 'removeSubscribers',
-      initFunc: 'ngOnInit',
-      destroyFunc: 'ngOnDestroy',
-      ...params
+  
+  target.prototype.ngOnDestroy = ngOnDestroyDecorator(target.prototype.ngOnDestroy);
+  
+  function ngOnDestroyDecorator(f) {
+    return function () {
+      do {
+        const sub: Unsubscribable = subscriptions.shift();
+        sub.unsubscribe();
+      } while (subscriptions.length);
+      
+      return f.apply(this, arguments);
     };
+  }
+  return target;
+}
 
-    target.prototype[params.initFunc] = ngOnInitDecorator(target.prototype[params.initFunc]);
-    target.prototype[params.destroyFunc] = ngOnDestroyDecorator(target.prototype[params.destroyFunc]);
-
-    function ngOnDestroyDecorator(f) {
-      return function () {
-        const superData = f ? f.apply(this, arguments) : null;
-
-        if (typeof this[params.removeSubscribersFunc] === 'function') {
-          this[params.removeSubscribersFunc]();
-        }
-
-        for (const subscriberKey of Object.keys(this.subscribers)) {
-          const subscriber: Unsubscribable = this.subscribers[subscriberKey];
-          if (subscriber && typeof subscriber.unsubscribe === 'function') {
-            subscriber.unsubscribe();
-          }
-        }
-
-        return superData;
-      };
-    }
-
-    function ngOnInitDecorator(f) {
-      return function () {
-        const superData = f ? f.apply(this, arguments) : null;
-
-
-        if (typeof this[params.addSubscribersFunc] === 'function') {
-          this[params.addSubscribersFunc]();
-        }
-
-
-        return superData;
-      };
-    }
-
-    return target;
-  };
+export function CombineSubscriptions(target: Object, propertyKey: string | symbol) {
+  Reflect.defineMetadata('subscription:name', propertyKey, target, 'subscriber');
 }
