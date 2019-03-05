@@ -24,27 +24,29 @@ import {DestroySubscribers} from "ngx-destroy-subscribers";
 @Component({
   ...
 })
-@DestroySubscribers({
-  addSubscribersFunc: 'addSubscribers',
-  removeSubscribersFunc: 'removeSubscribers',
-  initFunc: 'ngOnInit',
-  destroyFunc: 'ngOnDestroy',
-})
-export class TestComponent {
-  public subscribers: any = {};
-  
-  addSubscribers() {
-    this.subscribers.testSubscriber = Observable.of('true')
-    .subscribe(response => {
-      console.log(response);
-    })
+@DestroySubscribers()
+export class TestComponent implements OnInit, OnDestroy {
+
+  @CombineSubscriptions()
+  private subscriber: Unsubscribable;
+
+  ngOnInit() {
+    this.subscriber = of('true')
+      .subscribe(value => console.log(value));
+    
+    this.subscriber = of('false')
+      .subscribe(value => console.log(value));
+  }
+
+  /*
+  This method must be declared, even if it's empty because of AOT compilation;
+  Otherwise, the Decorator would throw an Error.
+  */
+  ngOnDestroy() {
+   console.log('for unsubscribing');
   }
 }
 ```
 
-- `subscribers` - The object which stores all subscribers
-- `addSubscribersFunc` - The function where subscriptions on streams happen (by default - addSubscribers)
-- `removeSubscribersFunc` - The function where subscribers are removed automatically (by default - removeSubscribers)
-- `initFunc` - The function that is called when constructor is applied (by default - ngOnInit)
-- `destroyFunc` - The function that is called when destructor is applied (by default - ngOnDestroy)
-
+- `subscriber` - The name by default for each subscription in case you don't apply the CombineSubscriptions Decorator. It conforms to an Unsubscribable Interface.
+- `@CombineSubscriptions` - Implement this Decorator in case you want to change the variable's name of a subscription, otherwise don't apply it.
