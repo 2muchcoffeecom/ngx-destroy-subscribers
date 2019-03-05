@@ -3,12 +3,15 @@ import 'reflect-metadata';
 
 export function DestroySubscribers<TFunction extends Function>(target: TFunction) {
   
-  const subscriptions: Array<Unsubscribable> = [];
+  const unsubscribableLike: {subscriptions: Unsubscribable[], unsubscribe: () => void} = {
+    subscriptions: [],
+    unsubscribe,
+  };
   const subscriber: string = Reflect.getMetadata('subscription:name', target.prototype, 'subscriber');
   
   Object.defineProperty(target.prototype, subscriber ? subscriber : 'subscriber', {
-    get: () => subscriptions,
-    set: subscription => subscriptions.push(subscription),
+    get: () => unsubscribableLike,
+    set: subscription => unsubscribableLike.subscriptions.push(subscription),
   });
   
   if (typeof target.prototype.ngOnDestroy !== 'function') {
@@ -19,14 +22,18 @@ export function DestroySubscribers<TFunction extends Function>(target: TFunction
   
   function ngOnDestroyDecorator(f) {
     return function () {
-      do {
-        const sub: Unsubscribable = subscriptions.shift();
-        sub.unsubscribe();
-      } while (subscriptions.length);
-      
+      unsubscribe();
       return f.apply(this, arguments);
     };
   }
+
+  function unsubscribe() {
+    do {
+      const sub: Unsubscribable = unsubscribableLike.subscriptions.shift();
+      sub.unsubscribe();
+    } while (unsubscribableLike.subscriptions.length);
+  }
+
   return target;
 }
 
