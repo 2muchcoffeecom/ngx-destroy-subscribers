@@ -1,58 +1,46 @@
-import { Unsubscribable } from 'rxjs/index';
+import { Unsubscribable } from 'rxjs';
+import 'reflect-metadata';
 
-export function DestroySubscribers(
-  params?: {
-    addSubscribersFunc: string,
-    removeSubscribersFunc: string,
-    initFunc: string,
-    destroyFunc: string,
-  }
-) {
-  return function (target: any) {
-    params = {
-      addSubscribersFunc: 'addSubscribers',
-      removeSubscribersFunc: 'removeSubscribers',
-      initFunc: 'ngOnInit',
-      destroyFunc: 'ngOnDestroy',
-      ...params
+export function DestroySubscribers(params?) {
+  
+  return function (target) {
+    const unsubscribableLike: {subscriptions: Unsubscribable[], unsubscribe: () => void} = {
+      subscriptions: [],
+      unsubscribe,
     };
-
-    target.prototype[params.initFunc] = ngOnInitDecorator(target.prototype[params.initFunc]);
-    target.prototype[params.destroyFunc] = ngOnDestroyDecorator(target.prototype[params.destroyFunc]);
-
+    const subscriber: string = Reflect.getMetadata('subscription:name', target.prototype, 'subscriber');
+  
+    Object.defineProperty(target.prototype, subscriber ? subscriber : 'subscriber', {
+      get: () => unsubscribableLike,
+      set: subscription => unsubscribableLike.subscriptions.push(subscription),
+    });
+  
+    if (typeof target.prototype.ngOnDestroy !== 'function') {
+      throw new Error(`${target.prototype.constructor.name} must implement ngOnDestroy() lifecycle hook`);
+    }
+  
+    target.prototype.ngOnDestroy = ngOnDestroyDecorator(target.prototype.ngOnDestroy);
+  
     function ngOnDestroyDecorator(f) {
       return function () {
-        const superData = f ? f.apply(this, arguments) : null;
-
-        if (typeof this[params.removeSubscribersFunc] === 'function') {
-          this[params.removeSubscribersFunc]();
-        }
-
-        for (const subscriberKey of Object.keys(this.subscribers)) {
-          const subscriber: Unsubscribable = this.subscribers[subscriberKey];
-          if (subscriber && typeof subscriber.unsubscribe === 'function') {
-            subscriber.unsubscribe();
-          }
-        }
-
-        return superData;
+        unsubscribe();
+        return f.apply(this, arguments);
       };
     }
-
-    function ngOnInitDecorator(f) {
-      return function () {
-        const superData = f ? f.apply(this, arguments) : null;
-
-
-        if (typeof this[params.addSubscribersFunc] === 'function') {
-          this[params.addSubscribersFunc]();
-        }
-
-
-        return superData;
-      };
+  
+    function unsubscribe() {
+      do {
+        const sub: Unsubscribable = unsubscribableLike.subscriptions.shift();
+        if ( typeof sub.unsubscribe === 'function') { sub.unsubscribe(); }
+      } while (unsubscribableLike.subscriptions.length);
     }
-
+  
     return target;
+  };
+}
+
+export function CombineSubscriptions(params?) {
+  return function (target, propertyKey: string | symbol) {
+    Reflect.defineMetadata('subscription:name', propertyKey, target, 'subscriber');
   };
 }
