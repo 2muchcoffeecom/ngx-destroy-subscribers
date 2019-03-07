@@ -31,7 +31,7 @@ export function DestroySubscribers(params?) {
     function unsubscribe() {
       do {
         const sub: Unsubscribable = unsubscribableLike.subscriptions.shift();
-        if ( typeof sub.unsubscribe === 'function') { sub.unsubscribe(); }
+        if ( sub && typeof sub.unsubscribe === 'function') { sub.unsubscribe(); }
       } while (unsubscribableLike.subscriptions.length);
     }
   
