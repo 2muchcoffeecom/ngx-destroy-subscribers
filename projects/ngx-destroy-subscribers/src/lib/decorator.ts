@@ -4,6 +4,10 @@ import 'reflect-metadata';
 export function DestroySubscribers(params?) {
   
   return function (target) {
+    params = {
+      destroyFunc: 'ngOnDestroy',
+      ...params
+    };
     const unsubscribableLike: {subscriptions: Unsubscribable[], unsubscribe: () => void} = {
       subscriptions: [],
       unsubscribe,
@@ -15,11 +19,11 @@ export function DestroySubscribers(params?) {
       set: subscription => unsubscribableLike.subscriptions.push(subscription),
     });
   
-    if (typeof target.prototype.ngOnDestroy !== 'function') {
-      throw new Error(`${target.prototype.constructor.name} must implement ngOnDestroy() lifecycle hook`);
+    if (typeof target.prototype[params.destroyFunc] !== 'function') {
+      throw new Error(`${target.prototype.constructor.name} must implement ${params.destroyFunc}() lifecycle hook`);
     }
   
-    target.prototype.ngOnDestroy = ngOnDestroyDecorator(target.prototype.ngOnDestroy);
+    target.prototype[params.destroyFunc] = ngOnDestroyDecorator(target.prototype[params.destroyFunc]);
   
     function ngOnDestroyDecorator(f) {
       return function () {
