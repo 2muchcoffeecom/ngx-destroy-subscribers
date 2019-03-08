@@ -14,7 +14,7 @@ export function DestroySubscribers(params?) {
     };
     const subscriber: string = Reflect.getMetadata('subscription:name', target.prototype, 'subscriber');
   
-    Object.defineProperty(target.prototype, subscriber ? subscriber : 'subscriber', {
+    Object.defineProperty(target.prototype, subscriber || 'subscriber', {
       get: () => unsubscribableLike,
       set: subscription => unsubscribableLike.subscriptions.push(subscription),
     });
