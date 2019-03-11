@@ -4,22 +4,26 @@ import 'reflect-metadata';
 export function DestroySubscribers(params?) {
   
   return function (target) {
+    params = {
+      destroyFunc: 'ngOnDestroy',
+      ...params
+    };
     const unsubscribableLike: {subscriptions: Unsubscribable[], unsubscribe: () => void} = {
       subscriptions: [],
       unsubscribe,
     };
     const subscriber: string = Reflect.getMetadata('subscription:name', target.prototype, 'subscriber');
   
-    Object.defineProperty(target.prototype, subscriber ? subscriber : 'subscriber', {
+    Object.defineProperty(target.prototype, subscriber || 'subscriber', {
       get: () => unsubscribableLike,
       set: subscription => unsubscribableLike.subscriptions.push(subscription),
     });
   
-    if (typeof target.prototype.ngOnDestroy !== 'function') {
-      throw new Error(`${target.prototype.constructor.name} must implement ngOnDestroy() lifecycle hook`);
+    if (typeof target.prototype[params.destroyFunc] !== 'function') {
+      throw new Error(`${target.prototype.constructor.name} must implement ${params.destroyFunc}() lifecycle hook`);
     }
   
-    target.prototype.ngOnDestroy = ngOnDestroyDecorator(target.prototype.ngOnDestroy);
+    target.prototype[params.destroyFunc] = ngOnDestroyDecorator(target.prototype[params.destroyFunc]);
   
     function ngOnDestroyDecorator(f) {
       return function () {
@@ -31,7 +35,7 @@ export function DestroySubscribers(params?) {
     function unsubscribe() {
       do {
         const sub: Unsubscribable = unsubscribableLike.subscriptions.shift();
-        if ( typeof sub.unsubscribe === 'function') { sub.unsubscribe(); }
+        if ( sub && typeof sub.unsubscribe === 'function') { sub.unsubscribe(); }
       } while (unsubscribableLike.subscriptions.length);
     }
   
