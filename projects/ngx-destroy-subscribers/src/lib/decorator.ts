@@ -37,7 +37,7 @@ export function DestroySubscribers(params?) {
     function ngOnDestroyDecorator(f) {
       return function () {
         unsubscribe.call(this);
-        return f.apply(target, arguments);
+        return f.apply(this, arguments);
       };
     }
 
