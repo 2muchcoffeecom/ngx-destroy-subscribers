@@ -21,10 +21,10 @@ export function DestroySubscribers(params?) {
 
     Object.defineProperty(target.prototype, subscriber || 'subscriber', {
       get: function () {
-        return { unsubscribe: unsubscribe.bind(this) }
+        return { unsubscribe: unsubscribe.bind(this) };
       },
       set: function (subscription) {
-        unsubscribableLike.subscriptions.push({ subscription, instance: this})
+        unsubscribableLike.subscriptions.push({ subscription, instance: this});
       },
     });
 
