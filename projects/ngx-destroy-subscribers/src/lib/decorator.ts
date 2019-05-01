@@ -42,15 +42,9 @@ export function DestroySubscribers(params?) {
     }
 
     function unsubscribe() {
-      const subscriptionsWithInstances = unsubscribableLike.subscriptions;
-      const escapedSubscriptions = subscriptionsWithInstances.filter(
-        (sub) => sub && typeof sub.subscription.unsubscribe === 'function'
-      );
-      const currentSubscriptions = escapedSubscriptions.filter((sub) => sub.instance === this);
-      do {
-        const {subscription} = currentSubscriptions.shift();
-        subscription.unsubscribe()
-      } while (currentSubscriptions.length);
+      const subscriptions = unsubscribableLike.subscriptions.filter(sub => sub && typeof sub.subscription.unsubscribe === 'function');
+      const componentInstanceSubscriptions = subscriptions.filter(sub => sub.instance === this);
+      componentInstanceSubscriptions.forEach(({subscription}) => subscription.unsubscribe());
     }
 
     return target;
